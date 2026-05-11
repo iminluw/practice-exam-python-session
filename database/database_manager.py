@@ -9,7 +9,7 @@ class DatabaseManager:
     def get_connection(self):
         return sqlite3.connect(self.db_path)
 
-    # Методы создания таблиц (обязательно должны быть с такими именами для тестов)
+    # Методы создания таблиц (важны для тестов)
     def create_user_table(self):
         with self.get_connection() as conn:
             conn.execute('''CREATE TABLE IF NOT EXISTS users 
@@ -21,7 +21,7 @@ class DatabaseManager:
                 (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, description TEXT, 
                  priority TEXT, status TEXT, due_date TEXT, project_id INTEGER, assignee_id INTEGER)''')
 
-    # Методы работы с данными
+    # Методы работы с пользователями
     def add_user(self, username, password, email="test@test.com", role="user"):
         try:
             with self.get_connection() as conn:
@@ -38,6 +38,7 @@ class DatabaseManager:
             cursor.execute("SELECT * FROM users WHERE username = ? AND password = ?", (username, password))
             return cursor.fetchone()
 
+    # Методы работы с задачами
     def add_task(self, title, description, priority, due_date, assignee_id=None):
         with self.get_connection() as conn:
             cursor = conn.cursor()
