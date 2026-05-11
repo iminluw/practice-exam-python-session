@@ -1,23 +1,16 @@
 from models.user import User
 
 class UserController:
-    def __init__(self, db_manager) -> None:
-        pass
+    def __init__(self, db_manager):
+        self.db_manager = db_manager
+        self.current_user = None
 
-    def add_user(self, username, email, role) -> int:
-        pass
+    def login(self, username, password):
+        user_data = self.db_manager.get_user(username, password)
+        if user_data:
+            self.current_user = User.from_tuple(user_data)
+            return True
+        return False
 
-    def get_user(self, user_id) -> User | None:
-        pass
-
-    def get_all_users(self) -> list[User]:
-        pass
-
-    def update_user(self, user_id, **kwargs) -> bool:
-        pass
-
-    def delete_user(self, user_id) -> bool:
-        pass
-
-    def get_user_tasks(self, user_id) -> list:
-        pass
+    def logout(self):
+        self.current_user = None
