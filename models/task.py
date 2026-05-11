@@ -9,5 +9,7 @@ class Task:
         self.project_id = project_id
         self.assignee_id = assignee_id
 
-    def __repr__(self):
-        return f"Task({self.title}, {self.status})"
+    @staticmethod
+    def from_tuple(data):
+        if not data: return None
+        return Task(*data)
