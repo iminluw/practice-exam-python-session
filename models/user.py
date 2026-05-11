@@ -1,11 +1,17 @@
+from datetime import datetime
+
 class User:
-    def __init__(self, id, username, password, role):
+    def __init__(self, username, email, role, id=None):
         self.id = id
         self.username = username
-        self.password = password
+        self.email = email
         self.role = role
+        self.registration_date = datetime.now()
 
-    @staticmethod
-    def from_tuple(data):
-        if not data: return None
-        return User(*data)
+    def update_info(self, username=None, email=None, role=None):
+        if username: self.username = username
+        if email: self.email = email
+        if role: self.role = role
+
+    def to_dict(self):
+        return self.__dict__
