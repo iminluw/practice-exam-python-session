@@ -1,18 +1,29 @@
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import messagebox
 
-class UserView(ttk.Frame):
-    def __init__(self, parent, user_controller) -> None:
-        pass
+class LoginWindow:
+    def __init__(self, root, user_controller, on_login_success):
+        self.root = root
+        self.user_controller = user_controller
+        self.on_login_success = on_login_success
+        
+        self.root.title("Вход в систему")
+        self.root.geometry("300x200")
 
-    def create_widgets(self) -> None:
-        pass
+        tk.Label(root, text="Логин:").pack(pady=5)
+        self.username_entry = tk.Entry(root)
+        self.username_entry.pack(pady=5)
 
-    def refresh_users(self) -> None:
-        pass
+        tk.Label(root, text="Пароль:").pack(pady=5)
+        self.password_entry = tk.Entry(root, show="*")
+        self.password_entry.pack(pady=5)
 
-    def add_user(self) -> None:
-        pass
+        tk.Button(root, text="Войти", command=self.handle_login).pack(pady=20)
 
-    def delete_selected(self) -> None:
-        pass
+    def handle_login(self):
+        username = self.username_entry.get()
+        password = self.password_entry.get()
+        if self.user_controller.login(username, password):
+            self.on_login_success()
+        else:
+            messagebox.showerror("Ошибка", "Неверный логин или пароль")
