@@ -6,53 +6,29 @@ class DatabaseManager:
         self.init_db()
 
     def get_connection(self):
-        # Создаем подключение к файлу базы
         return sqlite3.connect(self.db_path)
 
     def init_db(self):
-        # Создаем таблицы, если их еще нет
         with self.get_connection() as conn:
             cursor = conn.cursor()
-            
-            # Таблица пользователей
-            cursor.execute('''
-                CREATE TABLE IF NOT EXISTS users (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    username TEXT UNIQUE NOT NULL,
-                    password TEXT NOT NULL,
-                    role TEXT NOT NULL
-                )
-            ''')
-            
-            # Таблица задач
-            cursor.execute('''
-                CREATE TABLE IF NOT EXISTS tasks (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    title TEXT NOT NULL,
-                    description TEXT,
-                    priority TEXT,
-                    status TEXT DEFAULT 'pending',
-                    due_date TEXT,
-                    project_id INTEGER,
-                    assignee_id INTEGER,
-                    FOREIGN KEY (assignee_id) REFERENCES users (id)
-                )
-            ''')
+            cursor.execute('''CREATE TABLE IF NOT EXISTS users 
+                            (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE, password TEXT, role TEXT)''')
+            cursor.execute('''CREATE TABLE IF NOT EXISTS tasks 
+                            (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, description TEXT, 
+                             priority TEXT, status TEXT, due_date TEXT, project_id INTEGER, assignee_id INTEGER)''')
             conn.commit()
 
-    # Пример метода для добавления задачи (INSERT)
-    def add_task(self, title, description, priority, due_date):
-        with self.get_connection() as conn:
-            cursor = conn.cursor()
-            cursor.execute('''
-                INSERT INTO tasks (title, description, priority, due_date)
-                VALUES (?, ?, ?, ?)
-            ''', (title, description, priority, due_date))
-            conn.commit()
+    def add_user(self, username, password, role="user"):
+        try:
+            with self.get_connection() as conn:
+                cursor = conn.cursor()
+                cursor.execute("INSERT INTO users (username, password, role) VALUES (?, ?, ?)", (username, password, role))
+                conn.commit()
+        except sqlite3.IntegrityError:
+            print("Пользователь уже существует")
 
-    # Пример метода для получения всех задач (SELECT)
-    def get_all_tasks(self):
+    def get_user(self, username, password):
         with self.get_connection() as conn:
             cursor = conn.cursor()
-            cursor.execute('SELECT * FROM tasks')
-            return cursor.fetchall()
+            cursor.execute("SELECT * FROM users WHERE username = ? AND password = ?", (username, password))
+            return cursor.fetchone()
