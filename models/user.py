@@ -1,15 +1,11 @@
-from datetime import datetime
-import re
-
 class User:
-    def __init__(self, username, email, role) -> None:
-        pass
+    def __init__(self, id, username, password, role):
+        self.id = id
+        self.username = username
+        self.password = password
+        self.role = role
 
-    def _is_valid_email(self, email) -> bool:
-        pass
-
-    def update_info(self, username=None, email=None, role=None) -> None:
-        pass
-
-    def to_dict(self) -> dict:
-        pass
+    @staticmethod
+    def from_tuple(data):
+        if not data: return None
+        return User(*data)
